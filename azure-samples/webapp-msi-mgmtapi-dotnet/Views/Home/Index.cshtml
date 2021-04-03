@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Resource List";
+}
+
+@model webapp_msi_mgmtapi_dotnet.Models.ResourceViewModelSet
+
+<div class="text-center">
+    <h1 class="display-4">Resource Group - </h1>
+    <table>
+        <thead>
+            <tr>
+                <th align="left">Name</th>
+                <th align="center">Kind</th>
+                <th align="left">Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var resources in Model.Values)
+            {
+                <tr>
+                    <td align="left">@resources.Name</td>
+                    <td align="center">@resources.Kind</td>
+                    <td align="left">@resources.Type</td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
