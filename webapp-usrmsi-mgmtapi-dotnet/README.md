@@ -21,7 +21,14 @@
 
 ## About The Sample
 
-This is a sample to demonstrate to call the Azure management rest api from an app service. The app service is using user assigned managed identity to read the resources under a resource group.
+There are many scenarios to access the Azure management library to perform repetitive tasks. The management library has a set of rest api protected over Azure active directory using oauth protocol. It works by passing a bearer token supplied by the Azure AD token endpoint. There are three ways to receive the token from Azure AD.
+
+- System-assigned managed identity
+- User-assigned managed identity
+- Service principle
+
+The managed identity(both system and user) does not require any credentials to define in the application to work. The Azure AD and Azure services can manage them. Conversely, the service principle works differently. It uses client id and client secret/certificate to define in the application to receive the token. It can follow two different grant types - client credential and password.
+This sample demonstrates accessing the Azure management rest api using the user-assigned managed identity. Please refer [here](/webapp-msi-mgmtapi-dotnet/README.md) for system-assigned managed identity.
 
 ### Built With
 
@@ -33,11 +40,14 @@ Following technologies, frameworks and tools are used
 
 ## Getting Started
 
-This is a sample to demonstrate to call the Azure management rest api from an app service. The app service is using user assigned managed identity to read the resources under a resource group.
+This is a sample demonstration to call the Azure management rest api from an app service. The app service is using a user-assigned managed identity to read the resources under a resource group. The main objective is to showcase
+
+- how to setup user-assigned managed identity of an azure app service
+- how the user-assigned managed identity can access the Azure resource group with a reader role
 
 ### Developer Sandbox
 
-The application is built to run in the developer machine and in the Azure environment as well. The ```AzureCliCredential``` is used to take the identity context from the Azure cli to authenticate and receive the access token. It requires logging in to Azure via ```az login``` first, and uses the cli's currently logged in identity. Similarly the ```ManagedIdentityCredential``` is used for the Azure environment to take the identity context from the msi token endpoint. To know more about the available authentication modes, please refer [here](https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme)
+The application is built to run in the developer machine and in the Azure environment as well. The ```AzureCliCredential``` is used to take the identity context from the Azure cli to authenticate and receive the access token. It requires logging in to Azure via ```az login``` first, and uses the cli's currently logged in identity. Similarly the ```ManagedIdentityCredential``` with the user-assigned client-id is used for the Azure environment to take the identity context from the msi token endpoint. To know more about the available authentication modes, please refer [here](https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme)
 
 This is an example of how to run the application in the local development environment.
 
