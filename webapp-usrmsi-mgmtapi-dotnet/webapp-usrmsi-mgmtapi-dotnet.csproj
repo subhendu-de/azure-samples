@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>webapp_usrmsi_mgmtapi_dotnet</RootNamespace>
+    <UserSecretsId>5142915e-97bf-405e-8452-ec360a17aae5</UserSecretsId>
   </PropertyGroup>
 	
 	<ItemGroup>
