@@ -81,17 +81,17 @@ set subscriptionid={subscription-id}
 set targetresourcegroup={target-resource-group-name}
 set appsvc=myappsvc%RANDOM%
 set webapp=mywebapp%RANDOM%
-set resourcegroup=IndiaDC1
+set resourcegroup={resource-group-name}
 set gitrepo=https://github.com/subhendu-de/azure-samples
 
 az group create --location southindia --name %resourcegroup%
 az appservice plan create --name %appsvc% --resource-group %resourcegroup% --sku FREE
 az webapp create --name %webapp% --resource-group %resourcegroup% --plan %appsvc%
 az webapp config appsettings set --resource-group %resourcegroup% --name %webapp% --settings SubscriptionId=%subscriptionid% ResourceGroup=%targetresourcegroup% PROJECT=%project%
-az webapp identity assign --resource-group %resourcegroup% --name %webapp% --role reader --scope /subscriptions/%subscriptionid%/%targetresourcegroup%
+az webapp identity assign --resource-group %resourcegroup% --name %webapp% --role reader --scope /subscriptions/%subscriptionid%/resourceGroups/%targetresourcegroup%
 az webapp deployment source config --name %webapp% --resource-group %resourcegroup% --repo-url %gitrepo% --branch main --manual-integration
 ```
 
-Please update the ```{subscription-id}``` and ```{target-resource-group-name}``` in the script. The application will read the resources under this ```{target-resource-group-name}``` mentioned in the script.
+Please update the ```{subscription-id}```, ```{resource-group-name}``` and ```{target-resource-group-name}``` in the script. The application will read the resources under this ```{target-resource-group-name}``` mentioned in the script.
 
 2. Access the site and it displays the list of resources with metadata.
