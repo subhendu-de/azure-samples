@@ -67,6 +67,7 @@ This is an example of how to run the application in the local development enviro
 1. Run the following scripts in windows command line
 
 ```bat
+set project=webapp-usrmsi-mgmtapi-dotnet/webapp-usrmsi-mgmtapi-dotnet.csproj
 set userAssignedClientId={user-assigned-client-id}
 set userAssignedIdentity={user-assigned-identity-name}
 set subscriptionid={subscription-id}
@@ -80,7 +81,7 @@ az group create --location southindia --name %resourcegroup%
 az identity create --resource-group %resourcegroup% --name %userAssignedIdentity% 
 az appservice plan create --name %appsvc% --resource-group %resourcegroup% --sku FREE
 az webapp create --name %webapp% --resource-group %resourcegroup% --plan %appsvc%
-az webapp config appsettings set --resource-group %resourcegroup% --name %webapp% --settings SubscriptionId=%subscriptionid% ResourceGroup=%targetresourcegroup% userAssignedClientId=%userAssignedClientId%
+az webapp config appsettings set --resource-group %resourcegroup% --name %webapp% --settings SubscriptionId=%subscriptionid% ResourceGroup=%targetresourcegroup% userAssignedClientId=%userAssignedClientId% PROJECT=%project%
 
 ```
 

@@ -66,6 +66,7 @@ This is an example of how to run the application in the local development enviro
 1. Run the following scripts in windows command line
 
 ```bat
+set project=webapp-msi-mgmtapi-dotnet/webapp-msi-mgmtapi-dotnet.csproj
 set subscriptionid={subscription-id}
 set targetresourcegroup={target-resource-group-name}
 set appsvc=myappsvc%RANDOM%
@@ -76,7 +77,7 @@ set gitrepo=https://github.com/subhendu-de/azure-samples
 az group create --location southindia --name %resourcegroup%
 az appservice plan create --name %appsvc% --resource-group %resourcegroup% --sku FREE
 az webapp create --name %webapp% --resource-group %resourcegroup% --plan %appsvc%
-az webapp config appsettings set --resource-group %resourcegroup% --name %webapp% --settings SubscriptionId=%subscriptionid% ResourceGroup=%targetresourcegroup%
+az webapp config appsettings set --resource-group %resourcegroup% --name %webapp% --settings SubscriptionId=%subscriptionid% ResourceGroup=%targetresourcegroup% PROJECT=%project%
 az webapp identity assign --resource-group %resourcegroup% --name %webapp% --role reader --scope /subscriptions/%subscriptionid%/%targetresourcegroup%
 az webapp deployment source config --name %webapp% --resource-group %resourcegroup% --repo-url %gitrepo% --branch main --manual-integration
 ```
