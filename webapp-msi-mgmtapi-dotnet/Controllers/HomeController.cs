@@ -28,15 +28,15 @@ namespace webapp_msi_mgmtapi_dotnet.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var _subscriptionId = _configuration["SubscriptionId"];
+            var _resourceGroup = _configuration["ResourceGroup"];            
+            var url = $"https://management.azure.com/subscriptions/{_subscriptionId}/resourceGroups/{_resourceGroup}/resources?api-version=2020-10-01";
+
+            ViewData["ResourceGroup"] = _resourceGroup;
+
             // authenticate using managed identity if it is available otherwise use the Azure CLI to auth
             // please refer https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme for more details
             var credential = new ChainedTokenCredential(new ManagedIdentityCredential(), new AzureCliCredential());
-
-            var _subscriptionId = _configuration["SubscriptionId"];
-            var _resourceGroup = _configuration["ResourceGroup"];
-            ViewData["ResourceGroup"] = _resourceGroup;
-
-            var url = $"https://management.azure.com/subscriptions/{_subscriptionId}/resourceGroups/{_resourceGroup}/resources?api-version=2020-10-01";
             var accessToken = await credential.GetTokenAsync(new TokenRequestContext(new string[] { "https://management.azure.com/" }));
 
             string response;
