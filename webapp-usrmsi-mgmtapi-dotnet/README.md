@@ -1,4 +1,4 @@
-## System assigned Managed Identity to access Azure Management REST API
+## User assigned Managed Identity to access Azure Management REST API
 <!-- TABLE OF CONTENTS -->
 <details open="open">
   <summary>Table of Contents</summary>
@@ -21,7 +21,7 @@
 
 ## About The Sample
 
-This is a sample to demonstrate to call the Azure management rest api from an app service. The app service is using system assigned managed identity to read the resources under a resource group.
+This is a sample to demonstrate to call the Azure management rest api from an app service. The app service is using user assigned managed identity to read the resources under a resource group.
 
 ### Built With
 
@@ -33,7 +33,7 @@ Following technologies, frameworks and tools are used
 
 ## Getting Started
 
-This is a sample to demonstrate to call the Azure management rest api from an app service. The app service is using system assigned managed identity to read the resources under a resource group.
+This is a sample to demonstrate to call the Azure management rest api from an app service. The app service is using user assigned managed identity to read the resources under a resource group.
 
 ### Developer Sandbox
 
@@ -41,10 +41,11 @@ The application is built to run in the developer machine and in the Azure enviro
 
 This is an example of how to run the application in the local development environment.
 
-1. The application uses user-secret file in local development environment. Please change the ```{subscription-id}``` and ```{resource-group-name}``` in the user-secret file. The application will read the resources under this ```{resource-group-name}``` mentioned in the file. The content of the file looks like
+1. The application uses user-secret file in local development environment. Please change the ```{subscription-id}```, ```{resource-group-name}``` and ```{user-assigned-client-id}``` in the user-secret file. The application will read the resources under this ```{resource-group-name}``` mentioned in the file. The content of the file looks like
 
 ```json
 {
+  "userAssignedClientId": "{user-assigned-client-id}",
   "SubscriptionId": "{subscription-id}",
   "ResourceGroup": "{resource-group-name}"
 }
@@ -55,8 +56,8 @@ This is an example of how to run the application in the local development enviro
 3. Run the following commands to build and run the asp.net core mvc application.
 
  ```sh
-<local-path>\webapp-msi-mgmtapi-dotnet> dotnet build .\webapp-msi-mgmtapi-dotnet.csproj -c Release
-<local-path>\webapp-msi-mgmtapi-dotnet> dotnet run .\webapp-msi-mgmtapi-dotnet.csproj -c Release 
+<local-path>\webapp-usrmsi-mgmtapi-dotnet> dotnet build .\webapp-usrmsi-mgmtapi-dotnet.csproj -c Release
+<local-path>\webapp-usrmsi-mgmtapi-dotnet> dotnet run .\webapp-usrmsi-mgmtapi-dotnet.csproj -c Release 
 ```
 
 4. Access the site ```https://localhost:5001/Home/Index```and it displays the list of resources with metadata.
@@ -66,6 +67,8 @@ This is an example of how to run the application in the local development enviro
 1. Run the following scripts in windows command line
 
 ```bat
+set userAssignedClientId={user-assigned-client-id}
+set userAssignedIdentity={user-assigned-identity-name}
 set subscriptionid={subscription-id}
 set targetresourcegroup={target-resource-group-name}
 set appsvc=myappsvc%RANDOM%
@@ -74,13 +77,13 @@ set resourcegroup=IndiaDC1
 set gitrepo=https://github.com/subhendu-de/azure-samples
 
 az group create --location southindia --name %resourcegroup%
+az identity create --resource-group %resourcegroup% --name %userAssignedIdentity% 
 az appservice plan create --name %appsvc% --resource-group %resourcegroup% --sku FREE
 az webapp create --name %webapp% --resource-group %resourcegroup% --plan %appsvc%
-az webapp config appsettings set --resource-group %resourcegroup% --name %webapp% --settings SubscriptionId=%subscriptionid% ResourceGroup=%targetresourcegroup%
-az webapp identity assign --resource-group %resourcegroup% --name %webapp% --role reader --scope /subscriptions/%subscriptionid%/%targetresourcegroup%
-az webapp deployment source config --name %webapp% --resource-group %resourcegroup% --repo-url %gitrepo% --branch main --manual-integration
+az webapp config appsettings set --resource-group %resourcegroup% --name %webapp% --settings SubscriptionId=%subscriptionid% ResourceGroup=%targetresourcegroup% userAssignedClientId=%userAssignedClientId%
+
 ```
 
-Please update the ```{subscription-id}``` and ```{target-resource-group-name}``` in the script. The application will read the resources under this ```{target-resource-group-name}``` mentioned in the script.
+Please update the ```{subscription-id}```, ```{target-resource-group-name}```, ```{user-assigned-client-id}``` and ```{user-assigned-identity-name}``` in the script. The application will read the resources under this ```{target-resource-group-name}``` mentioned in the script.
 
 2. Access the site and it displays the list of resources with metadata.
