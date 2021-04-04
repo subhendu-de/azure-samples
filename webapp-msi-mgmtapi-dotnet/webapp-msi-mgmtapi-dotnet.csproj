@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>webapp_msi_mgmtapi_dotnet</RootNamespace>
     <UserSecretsId>05bc30c8-b547-4716-aaa5-d7aef84d2ca7</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
