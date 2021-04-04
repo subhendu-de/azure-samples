@@ -78,23 +78,25 @@ This is an example of how to run the application in the local development enviro
 
 ```bat
 set project=webapp-usrmsi-mgmtapi-dotnet/webapp-usrmsi-mgmtapi-dotnet.csproj
-set userAssignedClientId={user-assigned-client-id}
 set userAssignedIdentity={user-assigned-identity-name}
 set subscriptionid={subscription-id}
 set targetresourcegroup={target-resource-group-name}
 set appsvc=myappsvc%RANDOM%
 set webapp=mywebapp%RANDOM%
-set resourcegroup=IndiaDC1
+set resourcegroup={resource-group-name}
 set gitrepo=https://github.com/subhendu-de/azure-samples
 
 az group create --location southindia --name %resourcegroup%
-az identity create --resource-group %resourcegroup% --name %userAssignedIdentity% 
 az appservice plan create --name %appsvc% --resource-group %resourcegroup% --sku FREE
 az webapp create --name %webapp% --resource-group %resourcegroup% --plan %appsvc%
 az webapp config appsettings set --resource-group %resourcegroup% --name %webapp% --settings SubscriptionId=%subscriptionid% ResourceGroup=%targetresourcegroup% userAssignedClientId=%userAssignedClientId% PROJECT=%project%
 
+
+az identity create --resource-group %resourcegroup% --name %userAssignedIdentity%
+set uaId=az identity list --resource-group %resourcegroup% --query [].clientId -o tsv
+az role assignment create --assignee %uaId% --role reader --scope /subscriptions/%subscriptionid%/resourceGroups/%targetresourcegroup%
 ```
 
-Please update the ```{subscription-id}```, ```{target-resource-group-name}```, ```{user-assigned-client-id}``` and ```{user-assigned-identity-name}``` in the script. The application will read the resources under this ```{target-resource-group-name}``` mentioned in the script.
+Please update the ```{subscription-id}```, ```{resource-group-name}```, ```{target-resource-group-name}```, and ```{user-assigned-identity-name}``` in the script. The application will read the resources under this ```{target-resource-group-name}``` mentioned in the script.
 
 2. Access the site and it displays the list of resources with metadata.
