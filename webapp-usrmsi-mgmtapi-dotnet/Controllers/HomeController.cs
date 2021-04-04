@@ -1,23 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Azure.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using webapp_msi_mgmtapi_dotnet.Models;
-using Azure.Identity;
-using Azure.Core;
-using System.Net.Http.Headers;
 using System.Net.Http;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using webapp_usrmsi_mgmtapi_dotnet.Models;
 
-namespace webapp_msi_mgmtapi_dotnet.Controllers
+namespace webapp_usrmsi_mgmtapi_dotnet.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+
         private readonly IConfiguration _configuration;
 
         public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
@@ -28,15 +29,17 @@ namespace webapp_msi_mgmtapi_dotnet.Controllers
 
         public async Task<IActionResult> Index()
         {
+
             var _subscriptionId = _configuration["SubscriptionId"];
-            var _resourceGroup = _configuration["ResourceGroup"];            
+            var _resourceGroup = _configuration["ResourceGroup"];
+            var _userAssignedClientId = _configuration["userAssignedClientId"];
             var url = $"https://management.azure.com/subscriptions/{_subscriptionId}/resourceGroups/{_resourceGroup}/resources?api-version=2020-10-01";
 
             ViewData["ResourceGroup"] = _resourceGroup;
 
             // authenticate using managed identity if it is available otherwise use the Azure CLI to auth
             // please refer https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme for more details
-            var credential = new ChainedTokenCredential(new ManagedIdentityCredential(), new AzureCliCredential());
+            var credential = new ChainedTokenCredential(new ManagedIdentityCredential(clientId: _userAssignedClientId), new AzureCliCredential());         
             var accessToken = await credential.GetTokenAsync(new TokenRequestContext(new string[] { "https://management.azure.com/" }));
 
             string response;
