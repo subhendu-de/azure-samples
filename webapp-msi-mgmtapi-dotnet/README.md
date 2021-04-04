@@ -12,8 +12,8 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#deployment">Deployment</a></li>
+        <li><a href="#developer-sandbox">Developer Sandbox</a></li>
+        <li><a href="#azure-environment">Azure Environment</a></li>
       </ul>
     </li>
   </ol>
@@ -35,13 +35,13 @@ Following technologies, frameworks and tools are used
 
 This is a sample to demonstrate to call the Azure management rest api from an app service. The app service is using system assigned managed identity to read the resources under a resource group.
 
-### Prerequisites
+### Developer Sandbox
 
-The application is built in such a way that it runs in the developer machine and in the Azure environment as well. ```AzureCliCredential``` is used to take the identity context from the Azure cli. It requires logging in to Azure via ```az login```, and will use the cli's currently logged in identity. ```ManagedIdentityCredential``` is used for the Azure environment.
+The application is built to run in the developer machine and in the Azure environment as well. The ```AzureCliCredential``` is used to take the identity context from the Azure cli to authenticate and receive the access token. It requires logging in to Azure via ```az login``` first, and uses the cli's currently logged in identity. Similarly the ```ManagedIdentityCredential``` is used for the Azure environment to take the identity context from the msi token endpoint. To know more about the available authentication modes, please refer [here](https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme)
 
-This is an example of how to run the application is the local development environment.
+This is an example of how to run the application in the local development environment.
 
-1. Change the ```{subscription-id}``` and ```{resource-group-name}``` in the user-secret file. The application will read the resources under this ```{resource-group-name}```. The content of the user-secret looks like
+1. The application uses user-secret file in local development environment. Please change the ```{subscription-id}``` and ```{resource-group-name}``` in the user-secret file. The application will read the resources under this ```{resource-group-name}``` mentioned in the file. The content of the file looks like
 
 ```json
 {
@@ -50,15 +50,18 @@ This is an example of how to run the application is the local development enviro
 }
 ```
 
-2. Please use  ```az login``` to logging into Azure.
+2. Please use  ```az login``` to logging into Azure. This step is mandatory to read the identity context from Azure cli.
+
 3. Run the following commands to build and run the asp.net core mvc application.
 
  ```sh
-dotnet build
-dotnet run 
+<local-path>\webapp-msi-mgmtapi-dotnet> dotnet build .\webapp-msi-mgmtapi-dotnet.csproj -c Release
+<local-path>\webapp-msi-mgmtapi-dotnet> dotnet run .\webapp-msi-mgmtapi-dotnet.csproj -c Release 
 ```
 
-### Deployment
+4. Access the site ```https://localhost:5001/Home/Index```and it displays the list of resources with metadata.
+
+### Azure Environment
 
 1. Run the following scripts in windows command line
 
@@ -78,6 +81,6 @@ az webapp identity assign --resource-group %resourcegroup% --name %webapp% --rol
 az webapp deployment source config --name %webapp% --resource-group %resourcegroup% --repo-url %gitrepo% --branch main --manual-integration
 ```
 
-Please update the ```{subscription-id}``` and ```{target-resource-group-name}```. The application will read the resources under this ```{target-resource-group-name}```
+Please update the ```{subscription-id}``` and ```{target-resource-group-name}``` in the script. The application will read the resources under this ```{target-resource-group-name}``` mentioned in the script.
 
 2. Access the site and it displays the list of resources with metadata.

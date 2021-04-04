@@ -26,26 +26,25 @@ namespace webapp_msi_mgmtapi_dotnet.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            #if DEBUG
-                var credential = new AzureCliCredential();
-            #else
-                var credential = new ManagedIdentityCredential();
-            #endif
+            // authenticate using managed identity if it is available otherwise use the Azure CLI to auth
+            // please refer https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme for more details
+            var credential = new ChainedTokenCredential(new ManagedIdentityCredential(), new AzureCliCredential());
 
             var _subscriptionId = _configuration["SubscriptionId"];
             var _resourceGroup = _configuration["ResourceGroup"];
+            ViewData["ResourceGroup"] = _resourceGroup;
 
             var url = $"https://management.azure.com/subscriptions/{_subscriptionId}/resourceGroups/{_resourceGroup}/resources?api-version=2020-10-01";
-            var accessToken = credential.GetTokenAsync(new TokenRequestContext(new string[] { "https://management.azure.com/" })).GetAwaiter().GetResult();
+            var accessToken = await credential.GetTokenAsync(new TokenRequestContext(new string[] { "https://management.azure.com/" }));
 
             string response;
 
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Token);
-                response = client.GetStringAsync(url).GetAwaiter().GetResult();
+                response = await client.GetStringAsync(url);
             }
 
             var resources = JsonConvert.DeserializeObject<ResourceViewModelSet>(response);
